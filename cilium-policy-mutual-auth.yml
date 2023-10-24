@@ -1,0 +1,24 @@
+cat <<EOF | kubectl apply  -f -
+    apiVersion: cilium.io/v2
+    kind: CiliumNetworkPolicy
+    metadata:
+      name: mutual-auth-sample
+    spec:
+      endpointSelector:
+        matchLabels:
+          app: server      
+      ingress:
+      - fromEndpoints:
+        - matchLabels:
+            app: client        
+        authentication:
+          mode: "required"
+        toPorts:
+        - ports:
+          - port: "8080"
+            protocol: TCP
+          rules:
+            http:
+            - method: "GET"
+              path: "/computer"
+EOF
